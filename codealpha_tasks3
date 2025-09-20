@@ -1,0 +1,495 @@
+import java.util.*;
+
+// Chatbot class
+class Chatbot {
+    private String name;
+
+    public Chatbot(String name) {
+        this.name = name;
+    }
+
+    // Generate a response based on user input
+    public String getResponse(String input) {
+        input = input.toLowerCase();
+
+        if (input.contains("hello") || input.contains("hi")) {
+            return "Hello! How can I help you today?";
+        } else if (input.contains("how are you")) {
+            return "I'm just a chatbot, but I'm doing great! How about you?";
+        } else if (input.contains("your name")) {
+            return "My name is " + name + ". Nice to meet you!";
+        } else if (input.contains("time")) {
+            return "Current time is: " + java.time.LocalTime.now().withNano(0);
+        } else if (input.contains("date")) {
+            return "Today's date is: " + java.time.LocalDate.now();
+        } else if (input.contains("bye") || input.contains("exit")) {
+            return "Goodbye! Have a nice day!";
+        } else {
+            return getRandomResponse();
+        }
+    }
+
+    private String getRandomResponse() {
+        String[] responses = {
+            "Interesting! Tell me more.",
+            "I see. Can you explain further?",
+            "Hmm, that's nice.",
+            "Could you elaborate on that?"
+        };
+        Random rand = new Random();
+        return responses[rand.nextInt(responses.length)];
+    }
+}
+
+// Main class
+public class ChatbotSimulator {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Chatbot bot = new Chatbot("ChatGPT-Java");
+
+        System.out.println("💬 Chatbot: Hi! I am " + bot.getResponse("your name") + " Type 'bye' to exit.");
+
+        while (true) {
+            System.out.print("You: ");
+            String input = sc.nextLine();
+
+            String response = bot.getResponse(input);
+            System.out.println("💬 Chatbot: " + response);
+
+            if (input.toLowerCase().contains("bye") || input.toLowerCase().contains("exit")) {
+                break;
+            }
+        }
+
+        sc.close();
+    }
+}
+import opennlp.tools.tokenize.SimpleTokenizer;
+import java.util.*;
+import java.io.*;
+
+// NLP-based Chatbot
+class NLPChatbot {
+    private String name;
+    private Map<String, String> keywordResponses;
+
+    public NLPChatbot(String name) {
+        this.name = name;
+        keywordResponses = new HashMap<>();
+
+        // Add keyword-based responses
+        keywordResponses.put("hello", "Hello! How can I help you today?");
+        keywordResponses.put("hi", "Hi there! What can I do for you?");
+        keywordResponses.put("name", "My name is " + name + ". Nice to meet you!");
+        keywordResponses.put("time", "Current time is: " + java.time.LocalTime.now().withNano(0));
+        keywordResponses.put("date", "Today's date is: " + java.time.LocalDate.now());
+        keywordResponses.put("how", "I am a Java chatbot using NLP! How are you?");
+        keywordResponses.put("bye", "Goodbye! Have a nice day!");
+    }
+
+    // Generate a response using NLP tokenization
+    public String getResponse(String input) {
+        input = input.toLowerCase();
+        SimpleTokenizer tokenizer = SimpleTokenizer.INSTANCE;
+        String[] tokens = tokenizer.tokenize(input);
+
+        for (String token : tokens) {
+            if (keywordResponses.containsKey(token)) {
+                return keywordResponses.get(token);
+            }
+        }
+
+        // fallback response
+        return getRandomResponse();
+    }
+
+    private String getRandomResponse() {
+        String[] responses = {
+            "Interesting! Tell me more.",
+            "I see. Can you explain further?",
+            "Hmm, that's nice.",
+            "Could you elaborate on that?"
+        };
+        Random rand = new Random();
+        return responses[rand.nextInt(responses.length)];
+    }
+}
+
+// Main class
+public class NLPChatbotSimulator {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        NLPChatbot bot = new NLPChatbot("JavaNLPBot");
+
+        System.out.println("💬 Chatbot: Hi! I am " + bot.getResponse("name") + " Type 'bye' to exit.");
+
+        while (true) {
+            System.out.print("You: ");
+            String input = sc.nextLine();
+
+            String response = bot.getResponse(input);
+            System.out.println("💬 Chatbot: " + response);
+
+            if (input.toLowerCase().contains("bye")) {
+                break;
+            }
+        }
+
+        sc.close();
+    }
+}
+import java.util.*;
+
+// Represents an Intent (like a simple ML class)
+class Intent {
+    String name;
+    List<String> patterns;  // keywords or phrases
+    List<String> responses; // possible responses
+
+    public Intent(String name) {
+        this.name = name;
+        patterns = new ArrayList<>();
+        responses = new ArrayList<>();
+    }
+
+    public void addPattern(String pattern) { patterns.add(pattern.toLowerCase()); }
+    public void addResponse(String response) { responses.add(response); }
+
+    // Check if input matches any pattern
+    public int matchScore(String input) {
+        int score = 0;
+        input = input.toLowerCase();
+        for (String pattern : patterns) {
+            if (input.contains(pattern)) score++;
+        }
+        return score;
+    }
+
+    public String getRandomResponse() {
+        Random rand = new Random();
+        return responses.get(rand.nextInt(responses.size()));
+    }
+}
+
+// Chatbot class with ML-style intent matching
+class MLChatbot {
+    private String name;
+    private List<Intent> intents;
+
+    public MLChatbot(String name) {
+        this.name = name;
+        intents = new ArrayList<>();
+        initIntents();
+    }
+
+    // Initialize intents (can be extended)
+    private void initIntents() {
+        Intent greeting = new Intent("greeting");
+        greeting.addPattern("hello");
+        greeting.addPattern("hi");
+        greeting.addPattern("hey");
+        greeting.addResponse("Hello! How can I help you today?");
+        greeting.addResponse("Hi there! Nice to meet you!");
+        intents.add(greeting);
+
+        Intent nameIntent = new Intent("name");
+        nameIntent.addPattern("your name");
+        nameIntent.addResponse("My name is " + name + ".");
+        intents.add(nameIntent);
+
+        Intent timeIntent = new Intent("time");
+        timeIntent.addPattern("time");
+        timeIntent.addResponse("Current time is: " + java.time.LocalTime.now().withNano(0));
+        intents.add(timeIntent);
+
+        Intent dateIntent = new Intent("date");
+        dateIntent.addPattern("date");
+        dateIntent.addResponse("Today's date is: " + java.time.LocalDate.now());
+        intents.add(dateIntent);
+
+        Intent byeIntent = new Intent("bye");
+        byeIntent.addPattern("bye");
+        byeIntent.addPattern("exit");
+        byeIntent.addResponse("Goodbye! Have a nice day!");
+        intents.add(byeIntent);
+
+        Intent defaultIntent = new Intent("default");
+        defaultIntent.addResponse("Interesting! Tell me more.");
+        defaultIntent.addResponse("I see. Can you explain further?");
+        defaultIntent.addResponse("Hmm, that's nice.");
+        intents.add(defaultIntent);
+    }
+
+    // Generate response
+    public String getResponse(String input) {
+        Intent bestMatch = null;
+        int maxScore = 0;
+
+        for (Intent intent : intents) {
+            int score = intent.matchScore(input);
+            if (score > maxScore) {
+                maxScore = score;
+                bestMatch = intent;
+            }
+        }
+
+        // If no match, use default intent
+        if (maxScore == 0) {
+            for (Intent intent : intents) {
+                if (intent.name.equals("default")) return intent.getRandomResponse();
+            }
+        }
+
+        return bestMatch.getRandomResponse();
+    }
+}
+
+// Main class
+public class MLChatbotSimulator {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        MLChatbot bot = new MLChatbot("JavaMLBot");
+
+        System.out.println("💬 Chatbot: Hi! I am JavaMLBot. Type 'bye' to exit.");
+
+        while (true) {
+            System.out.print("You: ");
+            String input = sc.nextLine();
+
+            String response = bot.getResponse(input);
+            System.out.println("💬 Chatbot: " + response);
+
+            if (input.toLowerCase().contains("bye") || input.toLowerCase().contains("exit")) break;
+        }
+
+        sc.close();
+    }
+}
+import java.util.*;
+
+// Represents a single FAQ entry
+class FAQEntry {
+    private String question;
+    private String answer;
+
+    public FAQEntry(String question, String answer) {
+        this.question = question.toLowerCase();
+        this.answer = answer;
+    }
+
+    public String getQuestion() { return question; }
+    public String getAnswer() { return answer; }
+
+    // Compute a simple match score based on keyword overlap
+    public int matchScore(String input) {
+        input = input.toLowerCase();
+        String[] inputWords = input.split("\\s+");
+        String[] questionWords = question.split("\\s+");
+        int score = 0;
+        for (String iw : inputWords) {
+            for (String qw : questionWords) {
+                if (iw.equals(qw)) score++;
+            }
+        }
+        return score;
+    }
+}
+
+// Chatbot class trained with FAQs
+class FAQChatbot {
+    private List<FAQEntry> faqList;
+    private String defaultResponse;
+
+    public FAQChatbot() {
+        faqList = new ArrayList<>();
+        defaultResponse = "I'm sorry, I don't have an answer for that. Can you rephrase?";
+        trainFAQs();
+    }
+
+    // Train bot with FAQs
+    private void trainFAQs() {
+        faqList.add(new FAQEntry("What is your name?", "I am FAQBot, your virtual assistant."));
+        faqList.add(new FAQEntry("How are you?", "I'm just a bot, but I'm functioning perfectly!"));
+        faqList.add(new FAQEntry("What can you do?", "I can answer frequently asked questions and chat with you."));
+        faqList.add(new FAQEntry("What is Java?", "Java is a high-level, class-based, object-oriented programming language."));
+        faqList.add(new FAQEntry("Who created Java?", "Java was originally developed by James Gosling at Sun Microsystems."));
+        faqList.add(new FAQEntry("What is OOP?", "OOP stands for Object-Oriented Programming, which uses classes and objects."));
+        faqList.add(new FAQEntry("What is a chatbot?", "A chatbot is a computer program designed to simulate conversation with humans."));
+    }
+
+    // Get response for user input
+    public String getResponse(String input) {
+        FAQEntry bestMatch = null;
+        int maxScore = 0;
+
+        for (FAQEntry faq : faqList) {
+            int score = faq.matchScore(input);
+            if (score > maxScore) {
+                maxScore = score;
+                bestMatch = faq;
+            }
+        }
+
+        return (bestMatch != null && maxScore > 0) ? bestMatch.getAnswer() : defaultResponse;
+    }
+}
+
+// Main class
+public class FAQChatbotSimulator {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        FAQChatbot bot = new FAQChatbot();
+
+        System.out.println("💬 FAQBot: Hello! I am trained to answer FAQs. Type 'bye' to exit.");
+
+        while (true) {
+            System.out.print("You: ");
+            String input = sc.nextLine();
+
+            if (input.toLowerCase().contains("bye")) {
+                System.out.println("💬 FAQBot: Goodbye! Have a nice day!");
+                break;
+            }
+
+            String response = bot.getResponse(input);
+            System.out.println("💬 FAQBot: " + response);
+        }
+
+        sc.close();
+    }
+}
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+
+// Represents a single FAQ entry
+class FAQEntry {
+    private String question;
+    private String answer;
+
+    public FAQEntry(String question, String answer) {
+        this.question = question.toLowerCase();
+        this.answer = answer;
+    }
+
+    public String getQuestion() { return question; }
+    public String getAnswer() { return answer; }
+
+    public int matchScore(String input) {
+        input = input.toLowerCase();
+        String[] inputWords = input.split("\\s+");
+        String[] questionWords = question.split("\\s+");
+        int score = 0;
+        for (String iw : inputWords) {
+            for (String qw : questionWords) {
+                if (iw.equals(qw)) score++;
+            }
+        }
+        return score;
+    }
+}
+
+// Chatbot logic
+class FAQChatbot {
+    private List<FAQEntry> faqList;
+    private String defaultResponse;
+
+    public FAQChatbot() {
+        faqList = new ArrayList<>();
+        defaultResponse = "I'm sorry, I don't have an answer for that. Can you rephrase?";
+        trainFAQs();
+    }
+
+    private void trainFAQs() {
+        faqList.add(new FAQEntry("What is your name?", "I am GUI-FAQBot, your virtual assistant."));
+        faqList.add(new FAQEntry("How are you?", "I'm just a bot, but I'm functioning perfectly!"));
+        faqList.add(new FAQEntry("What can you do?", "I can answer frequently asked questions and chat with you."));
+        faqList.add(new FAQEntry("What is Java?", "Java is a high-level, class-based, object-oriented programming language."));
+        faqList.add(new FAQEntry("Who created Java?", "Java was originally developed by James Gosling at Sun Microsystems."));
+        faqList.add(new FAQEntry("What is OOP?", "OOP stands for Object-Oriented Programming, which uses classes and objects."));
+        faqList.add(new FAQEntry("What is a chatbot?", "A chatbot is a computer program designed to simulate conversation with humans."));
+    }
+
+    public String getResponse(String input) {
+        FAQEntry bestMatch = null;
+        int maxScore = 0;
+
+        for (FAQEntry faq : faqList) {
+            int score = faq.matchScore(input);
+            if (score > maxScore) {
+                maxScore = score;
+                bestMatch = faq;
+            }
+        }
+
+        return (bestMatch != null && maxScore > 0) ? bestMatch.getAnswer() : defaultResponse;
+    }
+}
+
+// GUI class
+class ChatbotGUI {
+    private FAQChatbot bot;
+    private JFrame frame;
+    private JTextArea chatArea;
+    private JTextField inputField;
+    private JButton sendButton;
+
+    public ChatbotGUI() {
+        bot = new FAQChatbot();
+        initializeGUI();
+    }
+
+    private void initializeGUI() {
+        frame = new JFrame("FAQ Chatbot");
+        frame.setSize(500, 500);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
+
+        chatArea = new JTextArea();
+        chatArea.setEditable(false);
+        chatArea.setLineWrap(true);
+        chatArea.setWrapStyleWord(true);
+
+        JScrollPane scrollPane = new JScrollPane(chatArea);
+        frame.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new BorderLayout());
+
+        inputField = new JTextField();
+        sendButton = new JButton("Send");
+
+        inputPanel.add(inputField, BorderLayout.CENTER);
+        inputPanel.add(sendButton, BorderLayout.EAST);
+
+        frame.add(inputPanel, BorderLayout.SOUTH);
+
+        // Action listener for sending messages
+        sendButton.addActionListener(e -> sendMessage());
+        inputField.addActionListener(e -> sendMessage());
+
+        frame.setVisible(true);
+    }
+
+    private void sendMessage() {
+        String userMessage = inputField.getText().trim();
+        if (userMessage.isEmpty()) return;
+
+        chatArea.append("You: " + userMessage + "\n");
+        inputField.setText("");
+
+        String botResponse = bot.getResponse(userMessage);
+        chatArea.append("Bot: " + botResponse + "\n\n");
+
+        // Auto-scroll to bottom
+        chatArea.setCaretPosition(chatArea.getDocument().getLength());
+    }
+}
+
+// Main class
+public class FAQChatbotGUIApp {
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(ChatbotGUI::new);
+    }
+}
