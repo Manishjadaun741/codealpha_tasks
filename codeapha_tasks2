@@ -1,0 +1,266 @@
+import java.util.*;
+import java.io.*;
+
+// Stock class (unchanged)
+class Stock {
+    private String symbol;
+    private String name;
+    private double price;
+
+    public Stock(String symbol, String name, double price) {
+        this.symbol = symbol;
+        this.name = name;
+        this.price = price;
+    }
+
+    public String getSymbol() { return symbol; }
+    public String getName() { return name; }
+    public double getPrice() { return price; }
+
+    public void updatePrice() {
+        double changePercent = (Math.random() * 10 - 5) / 100;
+        price += price * changePercent;
+        if (price < 1) price = 1;
+    }
+
+    @Override
+    public String toString() {
+        return symbol + " (" + name + ") - $" + String.format("%.2f", price);
+    }
+}
+
+// Transaction class (unchanged)
+class Transaction {
+    private Stock stock;
+    private int quantity;
+    private String type;
+    private double price;
+
+    public Transaction(Stock stock, int quantity, String type, double price) {
+        this.stock = stock;
+        this.quantity = quantity;
+        this.type = type;
+        this.price = price;
+    }
+
+    @Override
+    public String toString() {
+        return type + " " + quantity + " shares of " + stock.getSymbol() + " @ $" + String.format("%.2f", price);
+    }
+
+    // For file saving
+    public String toFileString() {
+        return type + "," + stock.getSymbol() + "," + stock.getName() + "," + quantity + "," + price;
+    }
+
+    public static Transaction fromFileString(String line) {
+        String[] parts = line.split(",");
+        Stock s = new Stock(parts[1], parts[2], Double.parseDouble(parts[4]));
+        return new Transaction(s, Integer.parseInt(parts[3]), parts[0], Double.parseDouble(parts[4]));
+    }
+}
+
+// User class with File I/O
+class User {
+    private String username;
+    private double balance;
+    private Map<String, Integer> portfolio;
+    private List<Transaction> transactions;
+    private List<Double> portfolioHistory;
+
+    public User(String username, double balance) {
+        this.username = username;
+        this.balance = balance;
+        this.portfolio = new HashMap<>();
+        this.transactions = new ArrayList<>();
+        this.portfolioHistory = new ArrayList<>();
+    }
+
+    public double getBalance() { return balance; }
+
+    public void buyStock(Stock stock, int quantity) {
+        double cost = stock.getPrice() * quantity;
+        if (cost <= balance) {
+            balance -= cost;
+            portfolio.put(stock.getSymbol(), portfolio.getOrDefault(stock.getSymbol(), 0) + quantity);
+            transactions.add(new Transaction(stock, quantity, "BUY", stock.getPrice()));
+            System.out.println("✅ Bought " + quantity + " shares of " + stock.getSymbol());
+        } else {
+            System.out.println("❌ Not enough balance!");
+        }
+    }
+
+    public void sellStock(Stock stock, int quantity) {
+        int owned = portfolio.getOrDefault(stock.getSymbol(), 0);
+        if (owned >= quantity) {
+            double revenue = stock.getPrice() * quantity;
+            balance += revenue;
+            portfolio.put(stock.getSymbol(), owned - quantity);
+            transactions.add(new Transaction(stock, quantity, "SELL", stock.getPrice()));
+            System.out.println("✅ Sold " + quantity + " shares of " + stock.getSymbol());
+        } else {
+            System.out.println("❌ Not enough shares!");
+        }
+    }
+
+    public double calculatePortfolioValue(List<Stock> market) {
+        double total = balance;
+        for (Stock stock : market) {
+            total += portfolio.getOrDefault(stock.getSymbol(), 0) * stock.getPrice();
+        }
+        return total;
+    }
+
+    public void recordPortfolioValue(List<Stock> market) {
+        portfolioHistory.add(calculatePortfolioValue(market));
+    }
+
+    public void showPortfolio(List<Stock> market) {
+        System.out.println("\n📊 Portfolio of " + username);
+        System.out.println("💰 Balance: $" + String.format("%.2f", balance));
+        double totalValue = balance;
+        for (Stock stock : market) {
+            int qty = portfolio.getOrDefault(stock.getSymbol(), 0);
+            if (qty > 0) {
+                double value = qty * stock.getPrice();
+                totalValue += value;
+                System.out.println(stock.getSymbol() + ": " + qty + " shares (Value: $" + String.format("%.2f", value) + ")");
+            }
+        }
+        System.out.println("📈 Total Portfolio Value: $" + String.format("%.2f", totalValue));
+        System.out.println("----------------------------------\n");
+    }
+
+    public void showTransactions() {
+        System.out.println("\n📝 Transaction History:");
+        for (Transaction t : transactions) System.out.println(t);
+        System.out.println("----------------------------------\n");
+    }
+
+    public void showPerformance() {
+        System.out.println("\n📉 Portfolio Performance Over Time:");
+        for (int i = 0; i < portfolioHistory.size(); i++) {
+            System.out.println("Day " + (i + 1) + ": $" + String.format("%.2f", portfolioHistory.get(i)));
+        }
+        System.out.println("----------------------------------\n");
+    }
+
+    // File I/O methods
+    public void saveToFile() {
+        try {
+            // Save portfolio
+            PrintWriter pw = new PrintWriter(new File("portfolio_" + username + ".txt"));
+            pw.println(balance);
+            for (String stock : portfolio.keySet()) {
+                pw.println(stock + "," + portfolio.get(stock));
+            }
+            pw.close();
+
+            // Save transactions
+            pw = new PrintWriter(new File("transactions_" + username + ".txt"));
+            for (Transaction t : transactions) {
+                pw.println(t.toFileString());
+            }
+            pw.close();
+
+        } catch (Exception e) {
+            System.out.println("❌ Error saving data: " + e.getMessage());
+        }
+    }
+
+    public void loadFromFile() {
+        try {
+            File f1 = new File("portfolio_" + username + ".txt");
+            if (f1.exists()) {
+                Scanner sc = new Scanner(f1);
+                balance = Double.parseDouble(sc.nextLine());
+                while (sc.hasNextLine()) {
+                    String[] parts = sc.nextLine().split(",");
+                    portfolio.put(parts[0], Integer.parseInt(parts[1]));
+                }
+                sc.close();
+            }
+
+            File f2 = new File("transactions_" + username + ".txt");
+            if (f2.exists()) {
+                Scanner sc = new Scanner(f2);
+                while (sc.hasNextLine()) {
+                    transactions.add(Transaction.fromFileString(sc.nextLine()));
+                }
+                sc.close();
+            }
+
+        } catch (Exception e) {
+            System.out.println("❌ Error loading data: " + e.getMessage());
+        }
+    }
+}
+
+// Market class (unchanged)
+class Market {
+    private List<Stock> stocks;
+    public Market() { stocks = new ArrayList<>(); }
+    public void addStock(Stock s) { stocks.add(s); }
+    public List<Stock> getStocks() { return stocks; }
+    public void updateMarketPrices() { for (Stock s : stocks) s.updatePrice(); }
+    public void displayMarket() {
+        System.out.println("\n=== 📈 Stock Market ===");
+        for (int i = 0; i < stocks.size(); i++) {
+            System.out.println((i + 1) + ". " + stocks.get(i));
+        }
+    }
+}
+
+// Simulator with File I/O
+public class StockTradingSimulator {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        Market market = new Market();
+        market.addStock(new Stock("AAPL", "Apple", 150));
+        market.addStock(new Stock("GOOG", "Google", 2800));
+        market.addStock(new Stock("TSLA", "Tesla", 700));
+
+        System.out.print("Enter your name: ");
+        String name = sc.nextLine();
+        User user = new User(name, 10000);
+        user.loadFromFile();
+
+        int day = 1;
+        while (true) {
+            market.updateMarketPrices();
+            user.recordPortfolioValue(market.getStocks());
+
+            market.displayMarket();
+            System.out.println("4. View Portfolio");
+            System.out.println("5. View Performance History");
+            System.out.println("6. View Transaction History");
+            System.out.println("7. Save & Exit");
+            System.out.print("Choose an option: ");
+            int choice = sc.nextInt();
+
+            if (choice >= 1 && choice <= 3) {
+                Stock selected = market.getStocks().get(choice - 1);
+                System.out.println("Selected: " + selected);
+                System.out.print("1. Buy  2. Sell: ");
+                int action = sc.nextInt();
+                System.out.print("Enter quantity: ");
+                int qty = sc.nextInt();
+
+                if (action == 1) user.buyStock(selected, qty);
+                else if (action == 2) user.sellStock(selected, qty);
+            } else if (choice == 4) user.showPortfolio(market.getStocks());
+            else if (choice == 5) user.showPerformance();
+            else if (choice == 6) user.showTransactions();
+            else if (choice == 7) {
+                user.saveToFile();
+                System.out.println("👋 Data saved. Goodbye!");
+                break;
+            } else System.out.println("❌ Invalid choice!");
+
+            day++;
+        }
+
+        sc.close();
+    }
+}
