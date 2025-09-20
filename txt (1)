@@ -1,0 +1,547 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Student {
+    private String name;
+    private int rollNumber;
+    private ArrayList<Integer> grades;
+
+    public Student(String name, int rollNumber) {
+        this.name = name;
+        this.rollNumber = rollNumber;
+        this.grades = new ArrayList<>();
+    }
+
+    public void addGrade(int grade) {
+        grades.add(grade);
+    }
+
+    public double calculateAverage() {
+        if (grades.isEmpty()) return 0.0;
+        int sum = 0;
+        for (int grade : grades) {
+            sum += grade;
+        }
+        return (double) sum / grades.size();
+    }
+
+    public String getGradeLevel() {
+        double avg = calculateAverage();
+        if (avg >= 90) return "A";
+        else if (avg >= 75) return "B";
+        else if (avg >= 50) return "C";
+        else return "D";
+    }
+
+    public void displayStudent() {
+        System.out.println("Name: " + name);
+        System.out.println("Roll Number: " + rollNumber);
+        System.out.println("Grades: " + grades);
+        System.out.println("Average: " + calculateAverage());
+        System.out.println("Final Grade: " + getGradeLevel());
+        System.out.println("-----------------------------");
+    }
+}
+
+public class StudentGradeManager {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        ArrayList<Student> students = new ArrayList<>();
+
+        System.out.print("Enter number of students: ");
+        int n = sc.nextInt();
+        sc.nextLine(); // consume newline
+
+        for (int i = 0; i < n; i++) {
+            System.out.println("
+Enter details for Student " + (i + 1));
+
+            System.out.print("Enter name: ");
+            String name = sc.nextLine();
+
+            System.out.print("Enter roll number: ");
+            int roll = sc.nextInt();
+
+            Student s = new Student(name, roll);
+
+            System.out.print("Enter number of subjects: ");
+            int subjects = sc.nextInt();
+
+            for (int j = 0; j < subjects; j++) {
+                System.out.print("Enter grade for subject " + (j + 1) + ": ");
+                int grade = sc.nextInt();
+                s.addGrade(grade);
+            }
+            sc.nextLine(); // consume newline
+
+            students.add(s);
+        }
+
+        // Display all students
+        System.out.println("
+===== Student Records =====");
+        for (Student s : students) {
+            s.displayStudent();
+        }
+
+        sc.close();
+    }
+}
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Student {
+    private String name;
+    private int rollNumber;
+    private ArrayList<Integer> grades;
+
+    public Student(String name, int rollNumber) {
+        this.name = name;
+        this.rollNumber = rollNumber;
+        this.grades = new ArrayList<>();
+    }
+
+    public void addGrade(int grade) {
+        grades.add(grade);
+    }
+
+    public double calculateAverage() {
+        if (grades.isEmpty()) return 0.0;
+        int sum = 0;
+        for (int grade : grades) {
+            sum += grade;
+        }
+        return (double) sum / grades.size();
+    }
+
+    public int getHighestScore() {
+        if (grades.isEmpty()) return 0;
+        int max = grades.get(0);
+        for (int grade : grades) {
+            if (grade > max) max = grade;
+        }
+        return max;
+    }
+
+    public int getLowestScore() {
+        if (grades.isEmpty()) return 0;
+        int min = grades.get(0);
+        for (int grade : grades) {
+            if (grade < min) min = grade;
+        }
+        return min;
+    }
+
+    public String getGradeLevel() {
+        double avg = calculateAverage();
+        if (avg >= 90) return "A";
+        else if (avg >= 75) return "B";
+        else if (avg >= 50) return "C";
+        else return "D";
+    }
+
+    public void displayStudent() {
+        System.out.println("Name: " + name);
+        System.out.println("Roll Number: " + rollNumber);
+        System.out.println("Grades: " + grades);
+        System.out.println("Average: " + calculateAverage());
+        System.out.println("Highest Score: " + getHighestScore());
+        System.out.println("Lowest Score: " + getLowestScore());
+        System.out.println("Final Grade: " + getGradeLevel());
+        System.out.println("-----------------------------");
+    }
+}
+
+public class StudentGradeManager {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        ArrayList<Student> students = new ArrayList<>();
+
+        System.out.print("Enter number of students: ");
+        int n = sc.nextInt();
+        sc.nextLine(); // consume newline
+
+        for (int i = 0; i < n; i++) {
+            System.out.println("
+Enter details for Student " + (i + 1));
+
+            System.out.print("Enter name: ");
+            String name = sc.nextLine();
+
+            System.out.print("Enter roll number: ");
+            int roll = sc.nextInt();
+
+            Student s = new Student(name, roll);
+
+            System.out.print("Enter number of subjects: ");
+            int subjects = sc.nextInt();
+
+            for (int j = 0; j < subjects; j++) {
+                System.out.print("Enter grade for subject " + (j + 1) + ": ");
+                int grade = sc.nextInt();
+                s.addGrade(grade);
+            }
+            sc.nextLine(); // consume newline
+
+            students.add(s);
+        }
+
+        // Display all students
+        System.out.println("
+===== Student Records =====");
+        for (Student s : students) {
+            s.displayStudent();
+        }
+
+        sc.close();
+    }
+}
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Student {
+    private String name;
+    private int rollNumber;
+    private ArrayList<Integer> grades;
+
+    public Student(String name, int rollNumber) {
+        this.name = name;
+        this.rollNumber = rollNumber;
+        this.grades = new ArrayList<>();
+    }
+
+    public void addGrade(int grade) {
+        grades.add(grade);
+    }
+
+    public double calculateAverage() {
+        if (grades.isEmpty()) return 0.0;
+        int sum = 0;
+        for (int grade : grades) sum += grade;
+        return (double) sum / grades.size();
+    }
+
+    public int getHighestScore() {
+        if (grades.isEmpty()) return 0;
+        int max = grades.get(0);
+        for (int g : grades) if (g > max) max = g;
+        return max;
+    }
+
+    public int getLowestScore() {
+        if (grades.isEmpty()) return 0;
+        int min = grades.get(0);
+        for (int g : grades) if (g < min) min = g;
+        return min;
+    }
+
+    public void display() {
+        System.out.println("Name: " + name);
+        System.out.println("Roll No: " + rollNumber);
+        System.out.println("Grades: " + grades);
+        System.out.println("Average: " + calculateAverage());
+        System.out.println("Highest: " + getHighestScore());
+        System.out.println("Lowest: " + getLowestScore());
+        System.out.println("--------------------------");
+    }
+}
+
+public class StudentGradeManager {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        ArrayList<Student> students = new ArrayList<>();
+
+        System.out.print("Enter number of students: ");
+        int n = sc.nextInt();
+        sc.nextLine();
+
+        for (int i = 0; i < n; i++) {
+            System.out.println("
+Enter details for Student " + (i+1));
+            System.out.print("Name: ");
+            String name = sc.nextLine();
+            System.out.print("Roll Number: ");
+            int roll = sc.nextInt();
+            System.out.print("Number of subjects: ");
+            int sub = sc.nextInt();
+
+            Student s = new Student(name, roll);
+            for (int j = 0; j < sub; j++) {
+                System.out.print("Enter grade for subject " + (j+1) + ": ");
+                int grade = sc.nextInt();
+                s.addGrade(grade);
+            }
+            sc.nextLine(); // consume newline
+            students.add(s);
+        }
+
+        System.out.println("
+===== Student Records =====");
+        for (Student s : students) s.display();
+    }
+}
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Student {
+    private String name;
+    private int rollNumber;
+    private ArrayList<Integer> grades;
+
+    public Student(String name, int rollNumber) {
+        this.name = name;
+        this.rollNumber = rollNumber;
+        this.grades = new ArrayList<>();
+    }
+
+    public void addGrade(int grade) {
+        grades.add(grade);
+    }
+
+    public double calculateAverage() {
+        if (grades.isEmpty()) return 0.0;
+        int sum = 0;
+        for (int grade : grades) sum += grade;
+        return (double) sum / grades.size();
+    }
+
+    public int getHighestScore() {
+        if (grades.isEmpty()) return 0;
+        int max = grades.get(0);
+        for (int g : grades) if (g > max) max = g;
+        return max;
+    }
+
+    public int getLowestScore() {
+        if (grades.isEmpty()) return 0;
+        int min = grades.get(0);
+        for (int g : grades) if (g < min) min = g;
+        return min;
+    }
+
+    public String getName() { return name; }
+    public int getRollNumber() { return rollNumber; }
+
+    public void display() {
+        System.out.println("Name: " + name);
+        System.out.println("Roll No: " + rollNumber);
+        System.out.println("Grades: " + grades);
+        System.out.println("Average: " + calculateAverage());
+        System.out.println("Highest: " + getHighestScore());
+        System.out.println("Lowest: " + getLowestScore());
+        System.out.println("--------------------------");
+    }
+}
+
+public class StudentGradeManager {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        ArrayList<Student> students = new ArrayList<>();
+
+        System.out.print("Enter number of students: ");
+        int n = sc.nextInt();
+        sc.nextLine();
+
+        for (int i = 0; i < n; i++) {
+            System.out.println("
+Enter details for Student " + (i+1));
+            System.out.print("Name: ");
+            String name = sc.nextLine();
+            System.out.print("Roll Number: ");
+            int roll = sc.nextInt();
+            System.out.print("Number of subjects: ");
+            int sub = sc.nextInt();
+
+            Student s = new Student(name, roll);
+            for (int j = 0; j < sub; j++) {
+                System.out.print("Enter grade for subject " + (j+1) + ": ");
+                int grade = sc.nextInt();
+                s.addGrade(grade);
+            }
+            sc.nextLine(); // consume newline
+            students.add(s);
+        }
+
+        // Display all students
+        System.out.println("
+===== Student Records =====");
+        for (Student s : students) s.display();
+
+        // Summary Report
+        System.out.println("
+===== Summary Report =====");
+        double totalAvg = 0.0;
+        Student topper = students.get(0);
+        Student weakest = students.get(0);
+
+        for (Student s : students) {
+            double avg = s.calculateAverage();
+            totalAvg += avg;
+
+            if (avg > topper.calculateAverage()) topper = s;
+            if (avg < weakest.calculateAverage()) weakest = s;
+        }
+
+        double classAverage = totalAvg / students.size();
+
+        System.out.println("Total Students: " + students.size());
+        System.out.println("Class Average: " + classAverage);
+        System.out.println("Topper: " + topper.getName() + " (Roll No: " + topper.getRollNumber() + 
+                           ", Avg: " + topper.calculateAverage() + ")");
+        System.out.println("Weakest Student: " + weakest.getName() + " (Roll No: " + weakest.getRollNumber() + 
+                           ", Avg: " + weakest.calculateAverage() + ")");
+    }
+}
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+
+class Student {
+    private String name;
+    private int rollNumber;
+    private ArrayList<Integer> grades;
+
+    public Student(String name, int rollNumber) {
+        this.name = name;
+        this.rollNumber = rollNumber;
+        this.grades = new ArrayList<>();
+    }
+
+    public void addGrade(int grade) {
+        grades.add(grade);
+    }
+
+    public double calculateAverage() {
+        if (grades.isEmpty()) return 0.0;
+        int sum = 0;
+        for (int g : grades) sum += g;
+        return (double) sum / grades.size();
+    }
+
+    public int getHighestScore() {
+        if (grades.isEmpty()) return 0;
+        int max = grades.get(0);
+        for (int g : grades) if (g > max) max = g;
+        return max;
+    }
+
+    public int getLowestScore() {
+        if (grades.isEmpty()) return 0;
+        int min = grades.get(0);
+        for (int g : grades) if (g < min) min = g;
+        return min;
+    }
+
+    public String getName() { return name; }
+    public int getRollNumber() { return rollNumber; }
+    public ArrayList<Integer> getGrades() { return grades; }
+
+    @Override
+    public String toString() {
+        return name + " (Roll: " + rollNumber + 
+               ", Avg: " + calculateAverage() + 
+               ", High: " + getHighestScore() + 
+               ", Low: " + getLowestScore() + ")";
+    }
+}
+
+public class StudentGradeGUI extends JFrame {
+    private ArrayList<Student> students = new ArrayList<>();
+    private JTextArea outputArea;
+
+    public StudentGradeGUI() {
+        setTitle("Student Grade Manager");
+        setSize(600, 400);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        JPanel inputPanel = new JPanel(new GridLayout(5, 2));
+        JLabel nameLabel = new JLabel("Name:");
+        JTextField nameField = new JTextField();
+        JLabel rollLabel = new JLabel("Roll Number:");
+        JTextField rollField = new JTextField();
+        JLabel gradesLabel = new JLabel("Grades (comma-separated):");
+        JTextField gradesField = new JTextField();
+
+        JButton addButton = new JButton("Add Student");
+        JButton reportButton = new JButton("Show Report");
+
+        inputPanel.add(nameLabel);
+        inputPanel.add(nameField);
+        inputPanel.add(rollLabel);
+        inputPanel.add(rollField);
+        inputPanel.add(gradesLabel);
+        inputPanel.add(gradesField);
+        inputPanel.add(addButton);
+        inputPanel.add(reportButton);
+
+        outputArea = new JTextArea();
+        outputArea.setEditable(false);
+
+        add(inputPanel, BorderLayout.NORTH);
+        add(new JScrollPane(outputArea), BorderLayout.CENTER);
+
+        // Add student button
+        addButton.addActionListener(e -> {
+            try {
+                String name = nameField.getText().trim();
+                int roll = Integer.parseInt(rollField.getText().trim());
+                String[] gradeTokens = gradesField.getText().trim().split(",");
+                Student s = new Student(name, roll);
+                for (String g : gradeTokens) {
+                    if (!g.isEmpty()) {
+                        s.addGrade(Integer.parseInt(g.trim()));
+                    }
+                }
+                students.add(s);
+                outputArea.append("Added: " + s + "
+");
+
+                nameField.setText("");
+                rollField.setText("");
+                gradesField.setText("");
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Invalid input! Try again.");
+            }
+        });
+
+        // Show summary report
+        reportButton.addActionListener(e -> {
+            if (students.isEmpty()) {
+                outputArea.append("No students to report.
+");
+                return;
+            }
+            double totalAvg = 0;
+            Student topper = students.get(0);
+            Student weakest = students.get(0);
+
+            for (Student s : students) {
+                double avg = s.calculateAverage();
+                totalAvg += avg;
+                if (avg > topper.calculateAverage()) topper = s;
+                if (avg < weakest.calculateAverage()) weakest = s;
+            }
+
+            double classAvg = totalAvg / students.size();
+            outputArea.append("
+===== Summary Report =====
+");
+            outputArea.append("Total Students: " + students.size() + "
+");
+            outputArea.append("Class Average: " + classAvg + "
+");
+            outputArea.append("Topper: " + topper + "
+");
+            outputArea.append("Weakest: " + weakest + "
+
+");
+        });
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new StudentGradeGUI().setVisible(true);
+        });
+    }
+}
